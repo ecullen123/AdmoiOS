@@ -8,17 +8,33 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
+    @State private var selectedRole: UserRole? = nil
 
-#Preview {
-    ContentView()
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                // Always paint the background to prevent any white flash during transitions
+                AppBackground()
+
+                Group {
+                    if let role = selectedRole {
+                        AuthGateView(role: role) {
+                            selectedRole = nil
+                        }
+                    } else {
+                        RolePickerView { role in
+                            selectedRole = role
+                        }
+                    }
+                }
+            }
+            // Global accent color (black & neon green theme)
+            .tint(Theme.neon)
+
+            // Helps keep nav bar consistent dark during transitions
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbarBackground(Theme.bg, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+        }
+    }
 }
